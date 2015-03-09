@@ -1,6 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import java.util.TreeMap;
 
 /**
  * @author Alexey
@@ -9,7 +10,7 @@ public class BracketsMatcher {
     public static boolean check(String str) {
         if (str == null || str.isEmpty()) return true;
 
-        Map<Character, Character> brackets = new HashMap<>(3);
+        Map<Character, Character> brackets = new TreeMap<>();
         brackets.put('(', ')');
         brackets.put('{', '}');
         brackets.put('[', ']');
