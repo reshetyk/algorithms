@@ -8,16 +8,18 @@ import java.util.TreeMap;
  */
 public class BracketsMatcher {
     public static boolean check(String str) {
+
         if (str == null || str.isEmpty()) return true;
 
-        Map<Character, Character> brackets = new TreeMap<>();
+        Map<Character, Character> brackets = new HashMap<>();
         brackets.put('(', ')');
         brackets.put('{', '}');
         brackets.put('[', ']');
 
         Stack<Character> stack = new Stack<>();
 
-        for (char curChar : str.toCharArray()) {
+        for (int i = 0; i < str.length(); i++) {
+            char curChar = str.charAt(i);
             if (brackets.containsKey(curChar)) {
                 stack.push(curChar);
             } else if (brackets.containsValue(curChar) && (stack.isEmpty() || curChar != brackets.get(stack.pop()))) {
