@@ -41,8 +41,7 @@ public class LargestProductInSeries {
         int max = 0;
         for (int i = 0; i < series.length; i++) {
             if (i + limit > series.length) break;
-            int multiplyResult = stream(copyOfRange(series, i, limit + i)).reduce(1, multiple());
-            max = multiplyResult > max ? multiplyResult : max;
+            max = Math.max(stream(copyOfRange(series, i, limit + i)).reduce(1, multiple()), max);
         }
         return max;
     }
