@@ -23,32 +23,31 @@ public class LargestProductInSeries {
         return max;
     }
 
-
     public int findMaxMultiplyAdjacent() {
-        int res = findMaxMultiplyAdjacent(0, series.length - 1, 0);
-        System.out.println("series length=" + series.length + " limit=" + limit + " iterations=" + iterations);
-        return res;
-    }
-
-    public int findMaxMultiplyAdjacent(int from, int to, int res) {
         validateLimit(series, limit);
-
-        for (int i = from; i + limit - 1 <= to; i++) {
+        int res = 0, i;
+        for (i = 0; i + limit - 1 <= series.length - 1; i++) {
             if (res == 0) {
                 res = multiplySeries(series, i, limit + i - 1);
             }
-            if (i + limit < series.length - 1 && series[i + limit] == 0 || res == 0) {
-                return findMaxMultiplyAdjacent(i + limit + 1, to, 0);
+
+            if (series[i] == 0 || (i + limit < series.length - 1 && series[i + limit] == 0) || res == 0) {
+                i = i + limit;
+                res = 0;
+                continue;
             }
 
-            if (i + limit > series.length - 1)
-                return Math.max(res, max);
+            if (i + limit > series.length - 1){
+                max = Math.max(res, max);
+                break;
+            }
 
             res = res / series[i] * series[i + limit];
             iterations = iterations + 2;
 
             max = Math.max(res, max);
         }
+        System.out.println("series length=" + series.length + " limit=" + limit + " iterations=" + iterations);
         return max;
     }
 
