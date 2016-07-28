@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * Created by Reshetuyk on 17.07.2016.
  */
@@ -5,49 +7,68 @@ public class LargestProductInSeries {
     private int iterations;
     private int[] series;
     private int limit;
-    private int max = 0;
+    private long max = 0;
 
     public LargestProductInSeries(int[] series, int limit) {
         this.series = series;
         this.limit = limit;
     }
 
-    public int findMaxMultiplyAdjacentNotOptimized() {
+    public long findMaxMultiplyAdjacentNotOptimized() {
         validateLimit(series, limit);
-
+        int [] maxArr = new int[series.length-1];
         for (int i = 0; i + limit - 1 <= series.length - 1; i++) {
-            int res = multiplySeries(series, i, limit + i - 1);
+            long res = multiplySeries(series, i, limit + i - 1);
+            if (res > max) maxArr = Arrays.copyOfRange(series, i, limit + i - 1);
             max = Math.max(res, max);
         }
-        System.out.println("series length=" + series.length + " limit=" + limit + " iterations=" + iterations);
+        System.out.println("\nseries length=" + series.length + " limit=" + limit + " iterations=" + iterations);
+        System.out.println("max arr=" + Arrays.toString(maxArr) + "; max="+max);
         return max;
     }
 
-    public int findMaxMultiplyAdjacent() {
+    public long findMaxMultiplyAdjacent() {
+        int [] maxArr = new int[series.length-1];
         validateLimit(series, limit);
-        int res = 0, i;
+        int i, maxI = 0;
+        long res = 0;
         for (i = 0; i + limit - 1 <= series.length - 1; i++) {
             if (res == 0) {
                 res = multiplySeries(series, i, limit + i - 1);
             }
+//            9* 7* 5* 3* 6* 9* 7* 8* 1* 7* 9* 7* 7* 8 = 70573265280
+//            if (series[i] == 0 || (i + limit < series.length - 1 && series[i + limit] == 0) || res == 0) {
+//                i = i + limit;
+//                res = 0;
+//                continue;
+//            }
 
-            if (series[i] == 0 || (i + limit < series.length - 1 && series[i + limit] == 0) || res == 0) {
-                i = i + limit;
-                res = 0;
-                continue;
-            }
 
             if (i + limit > series.length - 1){
+                if (res > max) {
+                    maxArr = Arrays.copyOfRange(series, i, limit + i);
+                    maxI = i;
+                }
                 max = Math.max(res, max);
+                System.out.println(max);
                 break;
             }
 
+            if (res == 0 || series[i] == 0 || series[i + limit] == 0) {
+                res = 0;
+                continue;
+            }
             res = res / series[i] * series[i + limit];
+            if (res > max) {
+                maxArr = Arrays.copyOfRange(series, i + 1, limit + i + 1);
+                maxI = i;
+            }
             iterations = iterations + 2;
 
             max = Math.max(res, max);
         }
-        System.out.println("series length=" + series.length + " limit=" + limit + " iterations=" + iterations);
+        System.out.println("\nseries length=" + series.length + " limit=" + limit + " iterations=" + iterations);
+        System.out.println("max arr=" + Arrays.toString(maxArr) + "; max="+max +"; i="+maxI);
         return max;
     }
 
@@ -55,9 +76,9 @@ public class LargestProductInSeries {
         if (series.length < limit) throw new RuntimeException("limit cannot be larger than series");
     }
 
-    private int multiplySeries(int[] series, int from, int to) {
+    private long multiplySeries(int[] series, int from, int to) {
         validateFromTo(series, from, to);
-        int res = 1;
+        long res = 1;
         for (int i = from; i <= to; i++) {
             res *= series[i];
             ++iterations;
