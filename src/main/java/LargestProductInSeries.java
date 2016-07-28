@@ -30,7 +30,7 @@ public class LargestProductInSeries {
             if (res == 0) {
                 res = multiplySeries(series, i, limit + i - 1);
             }
-
+            //check if any of multipliers is zero - skip this range
             if (series[i] == 0 || (i + limit < series.length - 1 && series[i + limit] == 0) || res == 0) {
                 i = i + limit;
                 res = 0;
@@ -42,6 +42,7 @@ public class LargestProductInSeries {
                 break;
             }
 
+            //divide into first element in current range and multiply by the next
             res = res / series[i] * series[i + limit];
             iterations = iterations + 2;
 
