@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * Created by Reshetuyk on 17.07.2016.
  */
@@ -6,6 +8,9 @@ public class LargestProductInSeries {
     private int[] series;
     private int limit;
     private long max = 0;
+    int iMax = 0;
+    int [] maxArr = new int[limit];
+
 
     public LargestProductInSeries(int[] series, int limit) {
         this.series = series;
@@ -19,8 +24,12 @@ public class LargestProductInSeries {
             long res = multiplySeries(series, i, limit + i - 1);
             max = Math.max(res, max);
         }
-        System.out.println("series length=" + series.length + " limit=" + limit + " iterations=" + iterations);
+        logDebugInfo();
         return max;
+    }
+
+    private void logDebugInfo() {
+        System.out.println("series length=" + series.length + " limit=" + limit + " iterations=" + iterations + "; i="+iMax + "; max arr=" + Arrays.toString(maxArr));
     }
 
     public long findMaxMultiplyAdjacent() {
@@ -30,27 +39,33 @@ public class LargestProductInSeries {
             if (res == 0) {
                 res = multiplySeries(series, i, limit + i - 1);
             }
-            //check if any of multipliers is zero - skip this range
-            if (series[i] == 0 || (i + limit < series.length - 1 && series[i + limit] == 0) || res == 0) {
-                i = i + limit;
-                res = 0;
-                continue;
-            }
 
             if (i + limit > series.length - 1){
                 max = Math.max(res, max);
                 break;
             }
 
+            if (series[i] == 0 || series[i + limit] == 0 || res == 0) {
+                res = 0;
+                continue;
+            }
             //divide into first element in current range and multiply by the next
             res = res / series[i] * series[i + limit];
             iterations = iterations + 2;
-
             max = Math.max(res, max);
         }
-        System.out.println("series length=" + series.length + " limit=" + limit + " iterations=" + iterations);
+        logDebugInfo();
         return max;
     }
+
+/*
+    private void setMaxIndexAndMaxRange_forDebug(long res, int i) {
+        if (res > max) {
+            iMax = i;
+            maxArr = Arrays.copyOfRange(series, i + 1, limit + i - 1);
+        }
+    }
+*/
 
     private static void validateLimit(int[] series, int limit) {
         if (series.length < limit) throw new RuntimeException("limit cannot be larger than series");
