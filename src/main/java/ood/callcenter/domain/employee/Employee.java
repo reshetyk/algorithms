@@ -1,5 +1,6 @@
 package ood.callcenter.domain.employee;
 
+import ood.callcenter.domain.IncomeCall;
 import ood.callcenter.domain.PhoneCall;
 
 /**
@@ -8,7 +9,7 @@ import ood.callcenter.domain.PhoneCall;
 public interface Employee {
     String getName ();
 
-    void handleCall (PhoneCall phoneCall);
+    void handleCall (IncomeCall phoneCall);
 
     boolean canHandle (PhoneCall phoneCall);
 

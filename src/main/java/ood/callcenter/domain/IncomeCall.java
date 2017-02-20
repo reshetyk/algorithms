@@ -5,6 +5,7 @@ package ood.callcenter.domain;
  */
 public class IncomeCall implements PhoneCall {
     private int phone;
+    private volatile int duration;
 
     public IncomeCall(int phone) {
         this.phone = phone;
@@ -16,9 +17,19 @@ public class IncomeCall implements PhoneCall {
     }
 
     @Override
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    @Override
     public String toString() {
         return "IncomeCall{" +
                 "phone=" + phone +
+                ", duration=" + duration +
                 '}';
     }
 }

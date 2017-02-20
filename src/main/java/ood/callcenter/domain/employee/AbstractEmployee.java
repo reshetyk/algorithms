@@ -1,5 +1,6 @@
 package ood.callcenter.domain.employee;
 
+import ood.callcenter.domain.IncomeCall;
 import ood.callcenter.domain.PhoneCall;
 
 import java.util.Optional;
@@ -10,7 +11,7 @@ import java.util.Optional;
 public abstract class AbstractEmployee implements Employee {
     private String name;
     private Integer supportLevel;
-    private Optional<PhoneCall> currentCall = Optional.empty();
+    private volatile Optional<IncomeCall> currentCall = Optional.empty();
 
     public AbstractEmployee(String name, Integer supportLevel) {
         this.name = name;
@@ -23,19 +24,20 @@ public abstract class AbstractEmployee implements Employee {
     }
 
     @Override
-    public synchronized void handleCall(PhoneCall phoneCall) {
+    public synchronized void handleCall(IncomeCall phoneCall) {
         try {
             this.currentCall = Optional.of(phoneCall);
             int max = 3000;
-            int min = 1000;
-            long millis = min + (long)(Math.random() * ((max - min) + 1));
-            System.out.println(Thread.currentThread() + " Employee [" + getName() + "] handling the call " + phoneCall.toString() + "millis=" + millis);
-            Thread.currentThread().sleep(millis);
+            int min = 500;
+            long duration = min + (long)(Math.random() * ((max - min) + 1));
+            System.out.println(Thread.currentThread() + " Employee [" + getName() + "] handling the call [" + phoneCall.getNumber() + "] duration=" + duration);
+            Thread.currentThread().sleep(duration);
+            phoneCall.setDuration((int)duration);
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
             this.currentCall = Optional.empty();
-            System.out.println(Thread.currentThread() + " Employee [" + getName() + "] finished the " + phoneCall.toString());
+            System.out.println(Thread.currentThread() + " Employee [" + getName() + "] finished the [" + phoneCall.getNumber() + "]");
         }
     }
 
