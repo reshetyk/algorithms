@@ -25,7 +25,7 @@ public class CallCenterService {
         Optional<Employee> freeEmployee = team.stream()
                 .filter(e -> e.canHandle(phoneCall))
                 .sorted((e1, e2) -> e1.getSupportLevel().compareTo(e2.getSupportLevel()))
-                .findAny();
+                .findFirst();
 
         if (freeEmployee.isPresent()) {
             threadPoolExecutor.submit(() -> freeEmployee.get().handleCall(phoneCall));
