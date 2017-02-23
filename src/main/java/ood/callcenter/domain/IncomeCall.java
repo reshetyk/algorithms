@@ -6,6 +6,7 @@ package ood.callcenter.domain;
 public class IncomeCall implements PhoneCall {
     private int phone;
     private volatile int duration;
+    private volatile boolean isInProgress;
 
     public IncomeCall(int phone) {
         this.phone = phone;
@@ -30,6 +31,15 @@ public class IncomeCall implements PhoneCall {
         return "IncomeCall{" +
                 "phone=" + phone +
                 ", duration=" + duration +
+                ", isInProgress=" + isInProgress +
                 '}';
+    }
+
+    public boolean isInProgress() {
+        return isInProgress;
+    }
+
+    public void setInProgress(boolean isInProgress) {
+        this.isInProgress = isInProgress;
     }
 }

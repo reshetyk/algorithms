@@ -27,17 +27,14 @@ public abstract class AbstractEmployee implements Employee {
     public synchronized void handleCall(IncomeCall phoneCall) {
         try {
             this.currentCall = Optional.of(phoneCall);
-            int max = 3000;
-            int min = 500;
-            long duration = min + (long)(Math.random() * ((max - min) + 1));
-            System.out.println(Thread.currentThread() + " Employee [" + getName() + "] handling the call [" + phoneCall.getNumber() + "] duration=" + duration);
-            Thread.currentThread().sleep(duration);
-            phoneCall.setDuration((int)duration);
+            System.out.println(Thread.currentThread() + " Employee [" + getName() + "] handling the call [" + phoneCall.getNumber() + "]");
+            phoneCall.setInProgress(true);
+            phoneCall.setDuration((int) waitUntilCallInProgressAndGetDuration());
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
             this.currentCall = Optional.empty();
-            System.out.println(Thread.currentThread() + " Employee [" + getName() + "] finished the [" + phoneCall.getNumber() + "]");
+            System.out.println(Thread.currentThread() + " Employee [" + getName() + "] finished the [" + phoneCall + "]");
         }
     }
 
@@ -58,5 +55,12 @@ public abstract class AbstractEmployee implements Employee {
                 ", supportLevel=" + supportLevel +
                 ", currentCall=" + currentCall +
                 '}';
+    }
+
+    private long waitUntilCallInProgressAndGetDuration() {
+        long startTime = System.currentTimeMillis();
+        while (currentCall.get().isInProgress()) {/* talk */}
+        long endTime = System.currentTimeMillis();
+        return endTime - startTime;
     }
 }

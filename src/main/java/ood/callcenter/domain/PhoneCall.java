@@ -6,4 +6,5 @@ package ood.callcenter.domain;
 public interface PhoneCall {
     int getNumber ();
     int getDuration();
+    boolean isInProgress();
 }
