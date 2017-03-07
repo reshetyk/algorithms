@@ -13,17 +13,6 @@ public abstract class AbstractEmployee implements Employee {
     private Integer supportLevel;
     private volatile Optional<IncomeCall> currentCall = Optional.empty();
 
-    public AbstractEmployee(String name, Integer supportLevel) {
-        this.name = name;
-        this.supportLevel = supportLevel;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public synchronized void handleCall(IncomeCall phoneCall) {
         try {
             this.currentCall = Optional.of(phoneCall);
@@ -46,6 +35,21 @@ public abstract class AbstractEmployee implements Employee {
     @Override
     public Integer getSupportLevel() {
         return supportLevel;
+    }
+
+    public AbstractEmployee setSupportLevel(int supportLevel) {
+        this.supportLevel = supportLevel;
+        return this;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public AbstractEmployee setName(String name) {
+        this.name = name;
+        return this;
     }
 
     @Override

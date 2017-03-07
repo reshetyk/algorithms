@@ -5,7 +5,4 @@ package ood.callcenter.domain.employee;
  */
 public class TeamLead extends AbstractEmployee {
 
-    public TeamLead(String name, Integer supportLevel) {
-        super(name, supportLevel);
-    }
 }

@@ -8,8 +8,8 @@ import ood.callcenter.domain.employee.ProjectManager;
 import ood.callcenter.domain.employee.TeamLead;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.IntStream;
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
@@ -22,44 +22,53 @@ public class CallCenterServiceTest {
     public void testHandleCall() throws Exception {
 
         CallCenterTeam team = new CallCenterTeam();
-        team.addTeamMember(new TeamLead("team leader", 1));
-        team.addTeamMember(new Fresher("fresher 2", 0));
-        team.addTeamMember(new ProjectManager("project manager", 2));
-        team.addTeamMember(new Fresher("fresher 1", 0));
-        team.addTeamMember(new Fresher("fresher 3", 0));
-
+        team.addTeamMember(new ProjectManager().setName("project manager").setSupportLevel(2));
+        team.addTeamMember(new TeamLead().setName("team leader").setSupportLevel(1));
+//        team.addTeamMember(new Fresher().setName("fresher 3").setSupportLevel(0));
+//        team.addTeamMember(new Fresher().setName("fresher 2").setSupportLevel(0));
+        team.addTeamMember(new Fresher().setName("fresher 1").setSupportLevel(0));
 
         CallCenterService service = new CallCenterService(team, newFixedThreadPool(8));
 
-        List<IncomeCall> incomeCalls = generateIncomeCalls(10);
+        List<IncomeCall> incomeCalls = generateIncomeCallsWithCount(10);
 
         incomeCalls.forEach(c -> service.handleCall(c));
 
+        terminateCallsAsync(incomeCalls);
 
-        newSingleThreadExecutor().execute(() -> {
-            while (incomeCalls.stream().anyMatch(c -> c.isInProgress())) {
-                incomeCalls.stream()
-                        .filter(call -> call.isInProgress())
-                        .forEach(call -> {
-                            sleep(500, 1000);
-                            call.setInProgress(false);
-                        });
-            }
-        });
+        waitUntilAllCallsAreHandled(incomeCalls);
 
         HistoryCalls historyCalls = service.getHistoryCalls();
-
-        waitUntilAllPhoneCallsAreProcessed(incomeCalls, incomeCalls.size());
 
         printHistoryCalls(historyCalls);
 
         assertThat(historyCalls.allEmployees())
                 .extracting("supportLevel")
-                .isSorted();
+                .isSorted()
+                .startsWith(team.findAnyBy(Fresher.class).getSupportLevel())
+                .endsWith(team.findAnyBy(ProjectManager.class).getSupportLevel());
     }
 
-    private void waitUntilAllPhoneCallsAreProcessed(List<IncomeCall> phoneCalls, int count) {
-        while (phoneCalls.size() != count || phoneCalls.stream().anyMatch(p -> p.isInProgress())) {
+    private void terminateCallsAsync(List<IncomeCall> incomeCalls) {
+        newSingleThreadExecutor().execute(() -> {
+            while (incomeCalls.stream().anyMatch(c -> c.isInProgress() || c.getDuration() == 0)) {
+                incomeCalls.stream()
+                        .filter(call -> call.isInProgress() || call.getDuration() == 0)
+                        .forEach(call -> {
+                            sleepWithRange(500, 1000);
+                            call.setInProgress(false);
+//                            System.out.println("interrupted=" + call);
+                        });
+            }
+            System.out.println("All calls interrupted");
+        });
+    }
+
+    private void waitUntilAllCallsAreHandled(List<IncomeCall> phoneCalls) throws InterruptedException {
+        while (phoneCalls.stream().anyMatch(p -> p.getDuration() == 0) ||
+                phoneCalls.stream().anyMatch(p -> p.isInProgress())) {
+            Thread.currentThread().sleep(100);
+//            System.out.println("in progress now = " + phoneCalls.stream().filter(p -> p.getDuration() == 0).count());
         }
     }
 
@@ -71,15 +80,15 @@ public class CallCenterServiceTest {
         });
     }
 
-    private List<IncomeCall> generateIncomeCalls(int phoneCounts) {
-        List<IncomeCall> incomeCalls = new ArrayList<>();
-        IntStream.range(0, phoneCounts).forEach(i -> {
-            incomeCalls.add(new IncomeCall(i + 1000));
-        });
+    private List<IncomeCall> generateIncomeCallsWithCount(int phoneCounts) {
+        List<IncomeCall> incomeCalls = new CopyOnWriteArrayList<>();
+        IntStream.range(0, phoneCounts).forEach(i ->
+            incomeCalls.add(new IncomeCall(i + 1000))
+        );
         return incomeCalls;
     }
 
-    private static long sleep(int max, int min) {
+    private static long sleepWithRange(int max, int min) {
         long duration = min + (long) (Math.random() * ((max - min) + 1));
         try {
             Thread.currentThread().sleep(duration);

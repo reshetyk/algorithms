@@ -22,7 +22,11 @@ public class CallCenterTeam implements Iterable<Employee> {
         return team.iterator();
     }
 
-    public Stream<Employee> stream () {
+    public Stream<Employee> stream() {
         return team.stream();
+    }
+
+    public Employee findAnyBy(Class<? extends Employee> employeeClass) {
+        return stream().filter(e -> e.getClass().equals(employeeClass)).findAny().get();
     }
 }
