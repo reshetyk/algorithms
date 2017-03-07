@@ -31,6 +31,13 @@ public class FindSpecifiedSumPair {
         return pairs;
     }
 
+    public static void main(String[] args) {
+        System.out.println(rand(0, 5));
+    }
+    public static int rand(int lower, int higher) { 
+         return lower + (int)(Math.random() * (higher - lower + 1));
+         }
+
     public static List<Pair> findPairs2(Integer[] array, int sum) {
         Arrays.sort(array);
         int first = 0;
