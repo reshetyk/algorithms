@@ -32,10 +32,6 @@ public class Space {
         return number;
     }
 
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
-
     public SpaceType getType() {
         return type;
     }
