@@ -16,4 +16,15 @@ public class BracketsMatcherTest {
         assertEquals(true, BracketsMatcher.check("(the (test)of the brackets)"));
 
     }
+
+    @Test
+    public void testIsBalanced() throws Exception {
+        assertEquals(false, BracketsMatcher.isBalanced(""));
+        assertEquals(true, BracketsMatcher.isBalanced("[{}]"));
+        assertEquals(false, BracketsMatcher.isBalanced("[(]"));
+        assertEquals(false, BracketsMatcher.isBalanced("}{"));
+//        assertEquals(true, BracketsMatcher.check("([{}()]{})"));
+//        assertEquals(true, BracketsMatcher.check("(the (test)of the brackets)"));
+
+    }
 }
