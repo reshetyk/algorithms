@@ -2,6 +2,7 @@ package ood.parkinglot;
 
 
 import ood.parkinglot.vehicle.Vehicle;
+import org.apache.commons.lang3.Validate;
 
 import java.util.Optional;
 
@@ -14,12 +15,17 @@ public class Space {
     private SpaceType type;
     private Optional<Vehicle> vehicle = Optional.empty();
 
-    public Space(SpaceType type) {
+    public Space(Integer number, SpaceType type) {
+        this.number = number;
         this.type = type;
     }
 
-    public boolean withinSize(Vehicle vehicle) {
-        return type.withinInSize(vehicle.getSize());
+    public boolean isFitForSize(Vehicle vehicle) {
+        int capacity = 20;
+        return type.withinInSize(new Size(
+                        vehicle.getSize().getWidth() + capacity,
+                        vehicle.getSize().getHeight() + capacity)
+        );
     }
 
     public Integer getNumber() {
@@ -34,21 +40,33 @@ public class Space {
         return type;
     }
 
-    public Vehicle getVehicle() {
-        return vehicle.get();
+    public Optional<Vehicle> getVehicle() {
+        return vehicle;
     }
 
     public Vehicle release() {
+        if (isFree())
+            throw new RuntimeException("Cannot release space [" + toString() + "] because it is already free");
+
         Vehicle result = vehicle.get();
         this.vehicle = Optional.empty();
         return result;
     }
 
-    public void occupy(Vehicle vehicle) {
+    public void occupyWith(Vehicle vehicle) {
+        Validate.isTrue(isFitForSize(vehicle), "The vehicle is not fit for size for the space [" + toString() + "]");
         this.vehicle = Optional.of(vehicle);
     }
 
     public boolean isFree() {
-        return this.vehicle.isPresent();
+        return !this.vehicle.isPresent();
+    }
+
+    @Override
+    public String toString() {
+        return "Space{" +
+                "number=" + number +
+                ", type=" + type +
+                '}';
     }
 }

@@ -1,7 +1,5 @@
 package ood.parkinglot;
 
-import com.sun.glass.ui.Size;
-
 /**
 * Created by Reshetuyk on 23.03.2017.
 */
@@ -17,7 +15,11 @@ enum SpaceType {
         this.size = size;
     }
 
+    public Size getSize() {
+        return size;
+    }
+
     public boolean withinInSize (Size size) {
-        return this.size.height <= size.height && this.size.width <= size.width;
+        return this.size.getHeight() >= size.getHeight() && this.size.getWidth() >= size.getWidth();
     }
 }
