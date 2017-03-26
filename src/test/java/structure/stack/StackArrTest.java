@@ -5,10 +5,24 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StackArrTest {
+    @Test
+    public void testStackList () {
+        Stack<Integer> stack = new StackList<>();
+        stack.push(1);
+        stack.push(2);
+        stack.push(3);
+        assertThat(stack.peek()).isEqualTo(3);
+        assertThat(stack.peek()).isEqualTo(3);
+        assertThat(stack.pop()).isEqualTo(3);
+        assertThat(stack.pop()).isEqualTo(2);
+        assertThat(stack.pop()).isEqualTo(1);
+        stack.push(4);
+        assertThat(stack.pop()).isEqualTo(4);
+    }
 
     @Test
-    public void testStack() throws Exception {
-        StackArr<Integer> stack = new StackArr<>();
+    public void testStackArr() throws Exception {
+        Stack<Integer> stack = new StackArr<>();
         stack.push(1);
         stack.push(2);
         stack.push(3);
