@@ -2,6 +2,22 @@ package algorithm;
 
 public class CoinProblem {
 
+    static int minCoins(int arr[], int k) {
+        int table[] = new int[k + 1];
+        table[0] = 1;
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = arr[i]; j <= k; j++)
+                table[j] += table[j - arr[i]];
+        }
+
+        for (int i = k; i >= 0; i--)
+            if (table[i] != 0)
+                return i;
+
+        return 0;
+
+    }
+
     // m is size of coins array
     // (number of different coins)
     static int minCoins(int coins[], int m, int V) {
