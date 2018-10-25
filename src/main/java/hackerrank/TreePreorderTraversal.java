@@ -8,7 +8,12 @@ import java.util.Stack;
 public class TreePreorderTraversal {
 
     static class Node {
-        int data;
+
+        Node(String data) {
+            this.data = data;
+        }
+
+        String data;
         Node left;
         Node right;
     }
@@ -38,13 +43,16 @@ public class TreePreorderTraversal {
         }
     }
 
-    void preOrder2(Node root) {
-        if(root==null){
-            return ;
+    private int count;
+
+    int preOrder2(Node root) {
+        if(root == null){
+            return count;
         }
-        System.out.print(root.data+" ");
-        preOrder2(root.left);
-        preOrder2(root.right);
+        System.out.print(root.data + "; ");
+        preOrder2 (root.left);
+        preOrder2 (root.right);
+        return ++count;
     }
 
     static class TraverseNode {
